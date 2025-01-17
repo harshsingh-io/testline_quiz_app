@@ -79,13 +79,19 @@ Or watch on YouTube:
 
 ## Screenshots
 
-| Start Screen | Quiz Screen | Result Screen |
-|:------------:|:----------:|:-------------:|
-| <img src="assets/screenshots/start_screen.png" width="250"/> | <img src="assets/screenshots/quiz_screen.png" width="250"/> | <img src="assets/screenshots/result_screen.png" width="250"/> |
-| **Dark Theme** | **Question Review** | **Achievement Badges** |
-| <img src="assets/screenshots/dark_theme.png" width="250"/> | <img src="assets/screenshots/question_review.png" width="250"/> | <img src="assets/screenshots/achievements.png" width="250"/> |
-| **Timer Warning** | **Skip Dialog** | **Performance Stats** |
-| <img src="assets/screenshots/timer_warning.png" width="250"/> | <img src="assets/screenshots/skip_dialog.png" width="250"/> | <img src="assets/screenshots/performance_stats.png" width="250"/> |
+### Dark Theme
+| ![Dark Theme 1](assets/screenshots/dark_theme/1.jpg) | ![Dark Theme 2](assets/screenshots/dark_theme/2.jpg) | ![Dark Theme 3](assets/screenshots/dark_theme/3.jpg) |
+|:---:|:---:|:---:|
+| ![Dark Theme 4](assets/screenshots/dark_theme/4.jpg) | ![Dark Theme 5](assets/screenshots/dark_theme/5.jpg) |  |
+
+### Light Theme
+| ![Light Theme 1](assets/screenshots/light_theme/1.jpg) | ![Light Theme 2](assets/screenshots/light_theme/2.jpg) | ![Light Theme 3](assets/screenshots/light_theme/3.jpg) |
+|:---:|:---:|:---:|
+| ![Light Theme 4](assets/screenshots/light_theme/4.jpg) | ![Light Theme 5](assets/screenshots/light_theme/5.jpg) | ![Light Theme 6](assets/screenshots/light_theme/6.jpg) |
+
+### General Screenshots
+| ![Screenshot 1](assets/screenshots/1.jpg) | ![Screenshot 2](assets/screenshots/2.jpg) |
+|:---:|:---:|
 
 ## Technical Details
 
