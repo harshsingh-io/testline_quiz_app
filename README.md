@@ -16,6 +16,18 @@ Get the latest version of Testline Quiz:
   </a>
 </p>
 
+## Demo
+
+Check out the app in action:
+
+<p align="center">
+  <a href="https://github.com/harshsingh-io/testline_quiz_app/raw/main/assets/demo_video.mp4">
+    <img src="https://img.shields.io/badge/Watch-Demo-red?style=for-the-badge&logo=youtube" alt="Watch Demo"/>
+  </a>
+</p>
+
+[View Demo Video in Repository](https://github.com/harshsingh-io/testline_quiz_app/blob/main/assets/demo_video.mp4)
+
 ## Features
 
 ### Core Functionality
