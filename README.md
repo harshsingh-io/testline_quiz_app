@@ -6,6 +6,16 @@
 
 A modern, feature-rich quiz application built with Flutter that offers an engaging and interactive quiz-taking experience with gamification elements.
 
+## Download
+
+Get the latest version of Testline Quiz:
+
+<p align="center">
+  <a href="https://github.com/harshsingh-io/testline_quiz_app/raw/main/app-debug.apk">
+    <img src="https://img.shields.io/badge/Download-APK-blue?style=for-the-badge&logo=android" alt="Download APK"/>
+  </a>
+</p>
+
 ## Features
 
 ### Core Functionality
