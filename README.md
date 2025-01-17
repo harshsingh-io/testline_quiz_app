@@ -79,7 +79,13 @@ Or watch on YouTube:
 
 ## Screenshots
 
-[Add screenshots here showing different aspects of the app]
+| Start Screen | Quiz Screen | Result Screen |
+|:------------:|:----------:|:-------------:|
+| <img src="assets/screenshots/start_screen.png" width="250"/> | <img src="assets/screenshots/quiz_screen.png" width="250"/> | <img src="assets/screenshots/result_screen.png" width="250"/> |
+| **Dark Theme** | **Question Review** | **Achievement Badges** |
+| <img src="assets/screenshots/dark_theme.png" width="250"/> | <img src="assets/screenshots/question_review.png" width="250"/> | <img src="assets/screenshots/achievements.png" width="250"/> |
+| **Timer Warning** | **Skip Dialog** | **Performance Stats** |
+| <img src="assets/screenshots/timer_warning.png" width="250"/> | <img src="assets/screenshots/skip_dialog.png" width="250"/> | <img src="assets/screenshots/performance_stats.png" width="250"/> |
 
 ## Technical Details
 
