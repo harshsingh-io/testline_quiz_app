@@ -1,5 +1,9 @@
 # Testline Quiz App
 
+<p align="center">
+  <img src="assets/logo.png" alt="Testline Quiz Logo" width="200"/>
+</p>
+
 A modern, feature-rich quiz application built with Flutter that offers an engaging and interactive quiz-taking experience with gamification elements.
 
 ## Features
@@ -148,12 +152,12 @@ Response includes:
 
 1. Clone the repository:
 ```bash
-git clone [repository-url]
+git clone https://github.com/harshsingh-io/testline_quiz_app.git
 ```
 
 2. Navigate to project directory:
 ```bash
-cd testline_quiz
+cd testline_quiz_app
 ```
 
 3. Install dependencies:
@@ -174,12 +178,6 @@ flutter run
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## License
+## Repository
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
-
-- Flutter team for the amazing framework
-- Contributors and testers
-- [Add any other acknowledgments]
+You can find the source code at [github.com/harshsingh-io/testline_quiz_app](https://github.com/harshsingh-io/testline_quiz_app)
