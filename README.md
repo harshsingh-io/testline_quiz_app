@@ -1,7 +1,7 @@
 # Testline Quiz App
 
 <p align="center">
-  <img src="assets/logo.png" alt="Testline Quiz Logo" width="200"/>
+  <img src="assets/AppLogo.png" alt="Testline Quiz Logo" width="200"/>
 </p>
 
 A modern, feature-rich quiz application built with Flutter that offers an engaging and interactive quiz-taking experience with gamification elements.
