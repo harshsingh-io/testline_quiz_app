@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
+  static Color get primaryColor => Colors.blue;
+  static Color get primaryColorDark => Colors.blue[300]!;
+
   static ThemeData lightTheme = ThemeData(
     useMaterial3: true,
     brightness: Brightness.light,
     colorScheme: ColorScheme.light(
-      primary: Colors.blue,
+      primary: primaryColor,
       secondary: Colors.green,
       surface: Colors.white,
       background: Colors.grey[50]!,
@@ -36,7 +39,7 @@ class AppTheme {
     useMaterial3: true,
     brightness: Brightness.dark,
     colorScheme: ColorScheme.dark(
-      primary: Colors.blue[300]!,
+      primary: primaryColorDark,
       secondary: Colors.green[300]!,
       surface: Colors.grey[900]!,
       background: Colors.black,

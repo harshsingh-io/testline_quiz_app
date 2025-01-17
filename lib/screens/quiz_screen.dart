@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:testline_quiz/theme/app_theme.dart';
 import '../models/quiz_model.dart';
 import '../services/quiz_service.dart';
 import '../widgets/animated_progress_bar.dart';
@@ -9,6 +10,7 @@ import '../widgets/performance_badge.dart';
 import '../widgets/circular_score.dart';
 import '../widgets/animated_result_card.dart';
 import '../widgets/countdown_timer.dart';
+import 'start_screen.dart';
 
 class QuizScreen extends StatefulWidget {
   final VoidCallback onThemeToggle;
@@ -153,6 +155,33 @@ class _QuizScreenState extends State<QuizScreen> {
     if (!_quizCompleted && !_isTimerPaused) {
       _skipQuestion(quiz, autoSkip: true);
     }
+  }
+
+  Future<bool> _showQuitConfirmationDialog() async {
+    return await showDialog<bool>(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Stop Quiz'),
+              content: const Text(
+                  'Are you sure you want to quit this quiz? Your progress will be lost.'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text('No'),
+                ),
+                TextButton(
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.red,
+                  ),
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: const Text('Yes'),
+                ),
+              ],
+            );
+          },
+        ) ??
+        false;
   }
 
   Widget _buildQuestionCard(Question question, Quiz quiz) {
@@ -310,214 +339,67 @@ class _QuizScreenState extends State<QuizScreen> {
 
     return Stack(
       children: [
-        SingleChildScrollView(
-          child: Column(
-            children: [
-              AnimatedResultCard(
-                delay: const Duration(milliseconds: 0),
-                child: Card(
-                  margin: const EdgeInsets.all(16),
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Text(
-                          'Quiz Completed!',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-                        CircularScore(
-                          score: _score,
-                          maxScore: maxPossibleScore,
-                        ),
-                        const SizedBox(height: 24),
-                        Wrap(
-                          spacing: 16,
-                          runSpacing: 16,
-                          alignment: WrapAlignment.center,
-                          children: [
-                            PerformanceBadge(
-                              title: 'Perfect Score',
-                              description: 'Answered all questions correctly',
-                              icon: Icons.star,
-                              color: Colors.amber,
-                              isAchieved: correctAnswers == totalQuestions,
-                            ),
-                            PerformanceBadge(
-                              title: 'Speed Runner',
-                              description: 'No questions skipped',
-                              icon: Icons.speed,
-                              color: Colors.blue,
-                              isAchieved: skippedCount == 0,
-                            ),
-                            PerformanceBadge(
-                              title: 'Sharpshooter',
-                              description: 'Accuracy above 80%',
-                              icon: Icons.gps_fixed,
-                              color: Colors.green,
-                              isAchieved: accuracy >= 80,
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color:
-                                Theme.of(context).brightness == Brightness.dark
-                                    ? Colors.grey[900]
-                                    : Colors.grey[100],
-                            borderRadius: BorderRadius.circular(8),
-                          ),
+        Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    AnimatedResultCard(
+                      delay: const Duration(milliseconds: 0),
+                      child: Card(
+                        margin: const EdgeInsets.all(16),
+                        child: Padding(
+                          padding: const EdgeInsets.all(24),
                           child: Column(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              _buildStatRow(
-                                'Correct Answers',
-                                '$correctAnswers/$totalQuestions',
-                                Icons.check_circle,
-                                Colors.green,
-                              ),
-                              const SizedBox(height: 8),
-                              _buildStatRow(
-                                'Accuracy',
-                                '$accuracy%',
-                                Icons.percent,
-                                Colors.blue,
-                              ),
-                              const SizedBox(height: 8),
-                              _buildStatRow(
-                                'Skipped',
-                                '$skippedCount',
-                                Icons.skip_next,
-                                Colors.orange,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              AnimatedResultCard(
-                delay: const Duration(milliseconds: 300),
-                child: const Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Text(
-                    'Question Review',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-              ...quiz.questions.asMap().entries.map(
-                (entry) {
-                  final index = entry.key;
-                  final question = entry.value;
-                  final userAnswerId = _userAnswers[index];
-                  final userAnswer = userAnswerId != null
-                      ? question.options.firstWhere((o) => o.id == userAnswerId)
-                      : null;
-                  final correctAnswer =
-                      question.options.firstWhere((o) => o.isCorrect);
-
-                  return AnimatedResultCard(
-                    delay: Duration(milliseconds: 400 + (index * 100)),
-                    child: Card(
-                      margin: const EdgeInsets.all(16),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Question ${index + 1}',
-                              style: const TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              question.description,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            if (_skippedQuestions.contains(index)) ...[
                               const Text(
-                                'Question Skipped',
+                                'Quiz Completed!',
                                 style: TextStyle(
-                                  color: Colors.orange,
+                                  fontSize: 24,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              const SizedBox(height: 8),
-                              Row(
+                              const SizedBox(height: 24),
+                              CircularScore(
+                                score: _score,
+                                maxScore: maxPossibleScore,
+                              ),
+                              const SizedBox(height: 24),
+                              Wrap(
+                                spacing: 16,
+                                runSpacing: 16,
+                                alignment: WrapAlignment.center,
                                 children: [
-                                  const Text(
-                                    'Correct Answer: ',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
+                                  PerformanceBadge(
+                                    title: 'Perfect Score',
+                                    description:
+                                        'Answered all questions correctly',
+                                    icon: Icons.star,
+                                    color: Colors.amber,
+                                    isAchieved:
+                                        correctAnswers == totalQuestions,
                                   ),
-                                  Text(
-                                    correctAnswer.description,
-                                    style: const TextStyle(color: Colors.green),
+                                  PerformanceBadge(
+                                    title: 'Speed Runner',
+                                    description: 'No questions skipped',
+                                    icon: Icons.speed,
+                                    color: Colors.blue,
+                                    isAchieved: skippedCount == 0,
+                                  ),
+                                  PerformanceBadge(
+                                    title: 'Sharpshooter',
+                                    description: 'Accuracy above 80%',
+                                    icon: Icons.gps_fixed,
+                                    color: Colors.green,
+                                    isAchieved: accuracy >= 80,
                                   ),
                                 ],
                               ),
-                            ] else if (userAnswer != null) ...[
-                              Row(
-                                children: [
-                                  const Text(
-                                    'Your Answer: ',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                  Text(
-                                    userAnswer.description,
-                                    style: TextStyle(
-                                      color: userAnswer.isCorrect
-                                          ? Colors.green
-                                          : Colors.red,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              if (!userAnswer.isCorrect) ...[
-                                Row(
-                                  children: [
-                                    const Text(
-                                      'Correct Answer: ',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      correctAnswer.description,
-                                      style:
-                                          const TextStyle(color: Colors.green),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ],
-                            if (question.detailedSolution.isNotEmpty) ...[
                               const SizedBox(height: 16),
-                              const Text(
-                                'Explanation:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(height: 8),
                               Container(
+                                padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
                                   color: Theme.of(context).brightness ==
                                           Brightness.dark
@@ -525,103 +407,309 @@ class _QuizScreenState extends State<QuizScreen> {
                                       : Colors.grey[100],
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                padding: const EdgeInsets.all(16),
-                                child: MarkdownBody(
-                                  data: question.detailedSolution,
-                                  styleSheet: MarkdownStyleSheet(
-                                    p: TextStyle(
-                                      fontSize: 16,
-                                      color: Theme.of(context).brightness ==
-                                              Brightness.dark
-                                          ? Colors.grey[300]
-                                          : Colors.grey[900],
+                                child: Column(
+                                  children: [
+                                    _buildStatRow(
+                                      'Correct Answers',
+                                      '$correctAnswers/$totalQuestions',
+                                      Icons.check_circle,
+                                      Colors.green,
                                     ),
-                                    strong: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
+                                    const SizedBox(height: 8),
+                                    _buildStatRow(
+                                      'Accuracy',
+                                      '$accuracy%',
+                                      Icons.percent,
+                                      Colors.blue,
                                     ),
-                                    em: TextStyle(
-                                      color: Theme.of(context).brightness ==
-                                              Brightness.dark
-                                          ? Colors.grey[400]
-                                          : Colors.grey[700],
-                                      fontSize: 16,
+                                    const SizedBox(height: 8),
+                                    _buildStatRow(
+                                      'Skipped',
+                                      '$skippedCount',
+                                      Icons.skip_next,
+                                      Colors.orange,
                                     ),
-                                    blockquote: const TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 16,
-                                      fontStyle: FontStyle.italic,
-                                    ),
-                                    code: TextStyle(
-                                      backgroundColor:
-                                          Theme.of(context).brightness ==
-                                                  Brightness.dark
-                                              ? Colors.grey[800]
-                                              : Colors.grey[200],
-                                      color: Theme.of(context).brightness ==
-                                              Brightness.dark
-                                          ? Colors.grey[300]
-                                          : Colors.grey[900],
-                                      fontSize: 16,
-                                    ),
-                                    codeblockDecoration: BoxDecoration(
-                                      color: Theme.of(context).brightness ==
-                                              Brightness.dark
-                                          ? Colors.grey[800]
-                                          : Colors.grey[200],
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                    listBullet: TextStyle(
-                                      fontSize: 16,
-                                      color: Theme.of(context).brightness ==
-                                              Brightness.dark
-                                          ? Colors.grey[300]
-                                          : Colors.grey[900],
-                                    ),
-                                  ),
-                                  selectable: true,
+                                  ],
                                 ),
                               ),
                             ],
-                          ],
+                          ),
                         ),
                       ),
                     ),
-                  );
-                },
-              ).toList(),
-              AnimatedResultCard(
-                delay: Duration(
-                  milliseconds: 400 + (quiz.questions.length * 100) + 100,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _currentQuestionIndex = 0;
-                        _score = 0;
-                        _quizCompleted = false;
-                        _userAnswers.clear();
-                        _selectedOptionId = null;
-                        _skippedQuestions.clear();
-                      });
-                    },
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.all(16),
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
+                    AnimatedResultCard(
+                      delay: const Duration(milliseconds: 300),
+                      child: const Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Text(
+                          'Question Review',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                     ),
-                    child: const Text(
-                      'Restart Quiz',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                  ),
+                    ...quiz.questions.asMap().entries.map(
+                      (entry) {
+                        final index = entry.key;
+                        final question = entry.value;
+                        final userAnswerId = _userAnswers[index];
+                        final userAnswer = userAnswerId != null
+                            ? question.options
+                                .firstWhere((o) => o.id == userAnswerId)
+                            : null;
+                        final correctAnswer =
+                            question.options.firstWhere((o) => o.isCorrect);
+
+                        return AnimatedResultCard(
+                          delay: Duration(milliseconds: 400 + (index * 100)),
+                          child: Card(
+                            margin: const EdgeInsets.all(16),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Question ${index + 1}',
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    question.description,
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  if (_skippedQuestions.contains(index)) ...[
+                                    const Text(
+                                      'Question Skipped',
+                                      style: TextStyle(
+                                        color: Colors.orange,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Row(
+                                      children: [
+                                        const Text(
+                                          'Correct Answer: ',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Text(
+                                          correctAnswer.description,
+                                          style: const TextStyle(
+                                              color: Colors.green),
+                                        ),
+                                      ],
+                                    ),
+                                  ] else if (userAnswer != null) ...[
+                                    Row(
+                                      children: [
+                                        const Text(
+                                          'Your Answer: ',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Text(
+                                          userAnswer.description,
+                                          style: TextStyle(
+                                            color: userAnswer.isCorrect
+                                                ? Colors.green
+                                                : Colors.red,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 8),
+                                    if (!userAnswer.isCorrect) ...[
+                                      Row(
+                                        children: [
+                                          const Text(
+                                            'Correct Answer: ',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          Text(
+                                            correctAnswer.description,
+                                            style: const TextStyle(
+                                                color: Colors.green),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ],
+                                  if (question.detailedSolution.isNotEmpty) ...[
+                                    const SizedBox(height: 16),
+                                    const Text(
+                                      'Explanation:',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context).brightness ==
+                                                Brightness.dark
+                                            ? Colors.grey[900]
+                                            : Colors.grey[100],
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      padding: const EdgeInsets.all(16),
+                                      child: MarkdownBody(
+                                        data: question.detailedSolution,
+                                        styleSheet: MarkdownStyleSheet(
+                                          p: TextStyle(
+                                            fontSize: 16,
+                                            color:
+                                                Theme.of(context).brightness ==
+                                                        Brightness.dark
+                                                    ? Colors.grey[300]
+                                                    : Colors.grey[900],
+                                          ),
+                                          strong: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
+                                          em: TextStyle(
+                                            color:
+                                                Theme.of(context).brightness ==
+                                                        Brightness.dark
+                                                    ? Colors.grey[400]
+                                                    : Colors.grey[700],
+                                            fontSize: 16,
+                                          ),
+                                          blockquote: const TextStyle(
+                                            color: Colors.grey,
+                                            fontSize: 16,
+                                            fontStyle: FontStyle.italic,
+                                          ),
+                                          code: TextStyle(
+                                            backgroundColor:
+                                                Theme.of(context).brightness ==
+                                                        Brightness.dark
+                                                    ? Colors.grey[800]
+                                                    : Colors.grey[200],
+                                            color:
+                                                Theme.of(context).brightness ==
+                                                        Brightness.dark
+                                                    ? Colors.grey[300]
+                                                    : Colors.grey[900],
+                                            fontSize: 16,
+                                          ),
+                                          codeblockDecoration: BoxDecoration(
+                                            color:
+                                                Theme.of(context).brightness ==
+                                                        Brightness.dark
+                                                    ? Colors.grey[800]
+                                                    : Colors.grey[200],
+                                            borderRadius:
+                                                BorderRadius.circular(4),
+                                          ),
+                                          listBullet: TextStyle(
+                                            fontSize: 16,
+                                            color:
+                                                Theme.of(context).brightness ==
+                                                        Brightness.dark
+                                                    ? Colors.grey[300]
+                                                    : Colors.grey[900],
+                                          ),
+                                        ),
+                                        selectable: true,
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ).toList(),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 4,
+                    offset: const Offset(0, -2),
+                  ),
+                ],
+              ),
+              child: SafeArea(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                              builder: (_) => StartScreen(
+                                onThemeToggle: widget.onThemeToggle,
+                                themeMode: widget.themeMode,
+                              ),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.all(16),
+                          backgroundColor: Colors.grey,
+                          foregroundColor: Colors.white,
+                        ),
+                        child: const Text(
+                          'Back to Home',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            _currentQuestionIndex = 0;
+                            _score = 0;
+                            _quizCompleted = false;
+                            _userAnswers.clear();
+                            _selectedOptionId = null;
+                            _skippedQuestions.clear();
+                          });
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.all(16),
+                          backgroundColor: Colors.blue,
+                          foregroundColor: Colors.white,
+                        ),
+                        child: const Text(
+                          'Restart Quiz',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
         if (_showConfetti) const ConfettiOverlay(),
       ],
@@ -664,6 +752,28 @@ class _QuizScreenState extends State<QuizScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Testline Quiz'),
+        leading: !_quizCompleted
+            ? IconButton(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.red[700]
+                    : Colors.red,
+                icon: const Icon(Icons.stop_circle_outlined),
+                onPressed: () async {
+                  final shouldQuit = await _showQuitConfirmationDialog();
+                  if (shouldQuit && mounted) {
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (_) => StartScreen(
+                          onThemeToggle: widget.onThemeToggle,
+                          themeMode: widget.themeMode,
+                        ),
+                      ),
+                    );
+                  }
+                },
+                tooltip: 'Stop Quiz',
+              )
+            : null,
         actions: [
           IconButton(
             icon: Icon(
